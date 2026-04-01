@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ГВАПР: МЕГАВЕРС</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Cinzel', monospace;
+        }
+
+        body {
+            background: #0a1f0a;
+            min-height: 100vh;
+            padding: 20px;
+            color: #efe6c9;
+        }
+
+        .game-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: #1e3b2a;
+            border: 4px solid #b68b5c;
+            border-radius: 60px;
+            padding: 25px;
+        }
+
+        /* ШАПКА */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: #2c452c;
+            padding: 20px 40px;
+            border-radius: 100px;
+            border: 2px solid #ca9e6e;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header h1 {
+            font-size: 4rem;
+            color: #fbebaf;
+            text-shadow: 0 0 20px gold;
+            letter-spacing: 10px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 30px;
+            background: #1f321f;
+            padding: 15px 30px;
+            border-radius: 60px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffdb8e;
+        }
+
+        /* ВКЛАДКИ */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: #3a2f1f;
+            border: 3px solid #7d613b;
+            color: #f3e1b3;
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            border-radius: 60px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.1s;
+        }
+
+        .tab-btn.active {
+            background: #b8873a;
+            border-color: gold;
+            color: #1f2a0e;
+            transform: scale(1.05);
+            box-shadow: 0 0 30px gold;
+        }
+
+        /* КОНТЕНТ */
+        .content-area {
+            background: #1e2e1e;
+            border: 3px solid #b4945a;
+            border-radius: 50px;
+            padding: 25px;
+            min-height: 700px;
+        }
+
+        /* ОБЩИЕ СТИЛИ */
+        .classic-game, .sandbox-mode, .shop-tab, .recipes-tab, .achievements-tab {
+            display: none;
+        }
+
+        .classic-game.active, .sandbox-mode.active, .shop-tab.active, .recipes-tab.active, .achievements-tab.active {
+            display: block;
+        }
+
+        .grid-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        /* КЛАССИКА */
+        .difficulty-panel {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .diff-btn {
+            background: #3d2f1b;
+            border: 3px solid #836f44;
+            color: #ffefcf;
+            font-size: 1.2rem;
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #4d3c24;
+            transition: 0.08s;
+        }
+
+        .diff-btn.active {
+            background: #9d732f;
+            border-color: #f0c45a;
+            transform: translateY(2px);
+            box-shadow: 0 3px 0 #6b4d26;
+            color: #2f1f0a;
+        }
+
+        .cauldron {
+            background: #2e1d14;
+            border: 6px solid #785e3a;
+            border-radius: 200px 200px 60px 60px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        /* ПЕСОЧНИЦА */
+        .infinite-section {
+            background: #233223;
+            border-radius: 40px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 2px solid #9b8553;
+        }
+
+        .ingredients-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .ingredient-card {
+            background: #3a4a3a;
+            border: 3px solid #b4945a;
+            border-radius: 30px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: 0.1s;
+            min-width: 100px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .ingredient-card:hover {
+            background: #5b735b;
+            transform: scale(1.05);
+        }
+
+        .craft-area {
+            background: #1b2b1b;
+            border-radius: 40px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .craft-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .craft-slot {
+            background: #2a3a2a;
+            border: 4px dashed #9b8553;
+            border-radius: 30px;
+            padding: 30px;
+            text-align: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .craft-slot.filled {
+            border-style: solid;
+            border-color: #f0c45a;
+            background: #3d553d;
+        }
+
+        /* МАГАЗИН */
+        .shop-header {
+            background: #1f2f1f;
+            padding: 20px;
+            border-radius: 40px;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .shop-item {
+            background: #253525;
+            border: 3px solid #b68b5c;
+            border-radius: 40px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .shop-item-price {
+            color: #ffd966;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .buy-btn {
+            background: #5f7a3f;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 25px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-bottom: 4px solid #2f4225;
+            width: 100%;
+        }
+
+        .buy-btn:active {
+            transform: translateY(3px);
+            border-bottom-width: 1px;
+        }
+
+        /* КНИГА РЕЦЕПТОВ */
+        .recipe-card {
+            background: #2f402f;
+            border: 3px solid #ba9b64;
+            border-radius: 30px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .recipe-card.found {
+            background: #4f6f3f;
+            border-color: gold;
+            box-shadow: 0 0 20px gold;
+        }
+
+        .recipe-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffe49e;
+            margin-bottom: 10px;
+        }
+
+        /* АЧИВКИ */
+        .achievement-card {
+            background: #2f3120;
+            border-radius: 30px;
+            padding: 20px;
+            border-left: 10px solid #555;
+            position: relative;
+        }
+
+        .achievement-card.unlocked {
+            border-left-color: gold;
+            background: #3f5a2f;
+        }
+
+        .achievement-reward {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: gold;
+            color: #1f2f1f;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        /* КНОПКИ */
+        .action-btn {
+            background: #b8873a;
+            border: none;
+            border-radius: 60px;
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            color: white;
+            font-weight: bold;
+            border-bottom: 5px solid #6b4d26;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .action-btn:active {
+            transform: translateY(3px);
+            border-bottom-width: 2px;
+        }
+
+        .history-log {
+            background: #0f1f0f;
+            border-radius: 30px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .win-message {
+            background: gold;
+            color: #1f431f;
+            padding: 20px;
+            border-radius: 40px;
+            text-align: center;
+            font-size: 2rem;
+            margin: 20px 0;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: gold;
+            color: #1f2f1f;
+            padding: 20px 30px;
+            border-radius: 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s;
+            box-shadow: 0 0 30px gold;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <!-- ШАПКА -->
+    <div class="header">
+        <h1>ГВАПР</h1>
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="globalGold">1000</div>
+                <div>💰 ЗОЛОТО</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="globalLevel">1</div>
+                <div>⭐ УРОВЕНЬ</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="globalRecipes">1/74</div>
+                <div>📜 РЕЦЕПТЫ</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКИ -->
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="classic">⚗️ КЛАССИКА</button>
+        <button class="tab-btn" data-tab="sandbox">🏝️ ПЕСОЧНИЦА</button>
+        <button class="tab-btn" data-tab="shop">🏪 МАГАЗИН</button>
+        <button class="tab-btn" data-tab="recipes">📖 РЕЦЕПТЫ</button>
+        <button class="tab-btn" data-tab="achievements">🏆 АЧИВКИ</button>
+    </div>
+
+    <!-- КОНТЕНТ -->
+    <div class="content-area">
+        <!-- КЛАССИКА -->
+        <div id="classicTab" class="classic-game active">
+            <div class="difficulty-panel">
+                <button class="diff-btn active" data-diff="easy">🜁 НОВИЧОК</button>
+                <button class="diff-btn" data-diff="medium">⚗️ МАСТЕР</button>
+                <button class="diff-btn" data-diff="hard">🔥 ГРАНДМАСТЕР</button>
+                <button class="diff-btn" data-diff="legendary">👑 ЛЕГЕНДА</button>
+            </div>
+
+            <div class="cauldron">
+                <div class="flex-row">
+                    <span>🧪 Попыток: <span id="classicAttempts">0</span>/<span id="classicMax">7</span></span>
+                    <span id="classicHint">🔮 ???</span>
+                </div>
+
+                <div id="classicProgress" style="margin: 20px 0;">📜 Найдено: 0/1</div>
+
+                <div class="ingredients-grid" id="classicIngredients"></div>
+
+                <div style="display: flex; gap: 10px; margin: 20px 0;">
+                    <input type="text" id="classicMixInput" readonly style="flex: 3; background: #222010; border: 4px solid #9cb45c; border-radius: 60px; padding: 15px; font-size: 1.5rem; color: #fcf3bf; text-align: center;">
+                    <button id="classicMixBtn" class="action-btn" style="flex: 1;">🍲 ВАРИТЬ</button>
+                </div>
+
+                <div class="history-log" id="classicHistory"></div>
+                <div id="classicWinMessage" style="display: none;" class="win-message"></div>
+            </div>
+        </div>
+
+        <!-- ПЕСОЧНИЦА -->
+        <div id="sandboxTab" class="sandbox-mode">
+            <div class="infinite-section">
+                <h2 style="text-align: center;">♾️ БЕСКОНЕЧНЫЕ ИНГРЕДИЕНТЫ</h2>
+                <p style="text-align: center;">Нажимай - они не тратятся!</p>
+                <div class="ingredients-grid" id="sandboxIngredients"></div>
+            </div>
+
+            <div class="craft-area">
+                <h3 style="text-align: center;">⚗️ КОТЁЛ (нажми на слот)</h3>
+                <div class="craft-slots">
+                    <div class="craft-slot" id="sandboxSlot0">⬜ СЛОТ 1</div>
+                    <div class="craft-slot" id="sandboxSlot1">⬜ СЛОТ 2</div>
+                    <div class="craft-slot" id="sandboxSlot2">⬜ СЛОТ 3</div>
+                </div>
+
+                <div style="text-align: center; font-size: 2rem; margin: 20px 0;" id="sandboxResult">
+                    ➡️ ??? ⬅️
+                </div>
+
+                <button class="action-btn" id="sandboxCraftBtn" style="width: 100%; font-size: 2rem;">🔮 СОТВОРИТЬ</button>
+            </div>
+
+            <div class="history-log" id="sandboxHistory"></div>
+        </div>
+
+        <!-- МАГАЗИН -->
+        <div id="shopTab" class="shop-tab">
+            <div class="shop-header">
+                💰 ТВОЙ БАЛАНС: <span id="shopGold">1000</span> ЗОЛОТА
+            </div>
+            <div class="grid-panel" id="shopGrid"></div>
+        </div>
+
+        <!-- КНИГА РЕЦЕПТОВ -->
+        <div id="recipesTab" class="recipes-tab">
+            <h2 style="text-align: center; margin-bottom: 20px;">📖 ВСЕ РЕЦЕПТЫ (74 шт)</h2>
+            <div style="text-align: center; margin-bottom: 20px;">Открыто: <span id="recipesFoundCount">1</span>/74</div>
+            <div class="grid-panel" id="recipesGrid"></div>
+        </div>
+
+        <!-- АЧИВКИ -->
+        <div id="achievementsTab" class="achievements-tab">
+            <h2 style="text-align: center; margin-bottom: 20px;">🏆 ДОСТИЖЕНИЯ</h2>
+            <div class="grid-panel" id="achievementsGrid"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== БАЗА ДАННЫХ ====================
+    const ALL_INGREDIENTS = [
+        'ЛЯГ', 'ХРЯК', 'БРЫК', 'КВАК', 'ХРЮК', 'БРЯК',
+        'ОГОНЬ', 'ВОДА', 'ЗЕМЛЯ', 'ВОЗДУХ', 'КРИСТАЛЛ', 'ТРАВА',
+        'ГРИБ', 'ЦВЕТОК', 'ПЕПЕЛ', 'РТУТЬ', 'СЕРА', 'СОЛЬ',
+        'МЕДЬ', 'ЖЕЛЕЗО', 'ЗОЛОТО', 'МИСТИЦИУМ', 'ДЕРЕВО', 'КАМЕНЬ',
+        'ПЕСОК', 'СТЕКЛО', 'БУМАГА', 'ТКАНЬ', 'КРАСКА', 'ЧЕРНИЛА',
+        'РУДА', 'УГОЛЬ', 'МАГМА', 'ЛЁД', 'СНЕГ', 'ДЫМ',
+        'ЭНЕРГИЯ', 'МАГИЯ', 'ХАОС', 'ПОРЯДОК', 'ТЬМА', 'СВЕТ',
+        'ЖИЗНЬ', 'СМЕРТЬ', 'ВРЕМЯ', 'ПРОСТРАНСТВО', 'ДУША', 'РАЗУМ'
+    ];
+
+    const RECIPES = {
+        // Классика (4)
+        'ГВАПР': ['БРЫК', 'ЛЯГ', 'ХРЯК'],
+        'БУЛЬК': ['ХРЯК', 'БРЫК', 'ЛЯГ'],
+        'ШИПУЧКА': ['ЛЯГ', 'ЛЯГ', 'ХРЯК'],
+        'ЭЛИКСИР': ['КВАК', 'ХРЮК', 'БРЯК'],
+        
+        // Стихии (12)
+        'ПАР': ['ВОДА', 'ОГОНЬ'],
+        'ЛАВА': ['ЗЕМЛЯ', 'ОГОНЬ'],
+        'ВЕТЕР': ['ВОЗДУХ', 'ВОЗДУХ'],
+        'ГРЯЗЬ': ['ЗЕМЛЯ', 'ВОДА'],
+        'ПЫЛЬ': ['ЗЕМЛЯ', 'ВОЗДУХ'],
+        'ШТОРМ': ['ВОЗДУХ', 'ВОДА', 'ОГОНЬ'],
+        'СНЕГ': ['ВОДА', 'ВОЗДУХ'],
+        'ЛЁД': ['ВОДА', 'ВОДА'],
+        'ДЫМ': ['ОГОНЬ', 'ДЕРЕВО'],
+        'ТУМАН': ['ВОДА', 'ВОЗДУХ', 'ХОЛОД'],
+        'ГРОЗА': ['ВОЗДУХ', 'ВОДА', 'ЭНЕРГИЯ'],
+        'ВУЛКАН': ['ЗЕМЛЯ', 'ОГОНЬ', 'МАГМА'],
+        
+        // Металлы и минералы (10)
+        'БРОНЗА': ['МЕДЬ', 'ЖЕЛЕЗО'],
+        'СТАЛЬ': ['ЖЕЛЕЗО', 'УГОЛЬ'],
+        'СПЛАВ': ['ЖЕЛЕЗО', 'СЕРА', 'ОГОНЬ'],
+        'РУДА': ['ЗЕМЛЯ', 'МЕТАЛЛ'],
+        'САМОРОДОК': ['ЗОЛОТО', 'ЗЕМЛЯ'],
+        'МАГИЧЕСКИЙ МЕТАЛЛ': ['МИСТИЦИУМ', 'ЖЕЛЕЗО'],
+        'КРИСТАЛЛ': ['ЗЕМЛЯ', 'МАГИЯ'],
+        'ДРАГОЦЕННЫЙ КАМЕНЬ': ['КРИСТАЛЛ', 'МАГИЯ', 'ВРЕМЯ'],
+        'ОБСИДИАН': ['ЛАВА', 'ВОДА'],
+        'МРАМОР': ['КАМЕНЬ', 'СВЕТ'],
+        
+        // Зелья (15)
+        'ЗДОРОВЬЕ': ['ТРАВА', 'ВОДА', 'ГРИБ'],
+        'МАНА': ['КРИСТАЛЛ', 'ВОДА', 'ЦВЕТОК'],
+        'НЕВИДИМОСТЬ': ['МИСТИЦИУМ', 'ВОЗДУХ', 'ПЕПЕЛ'],
+        'ЛЕВИТАЦИЯ': ['ВОЗДУХ', 'ПЕПЕЛ', 'КРИСТАЛЛ'],
+        'БЕССМЕРТИЕ': ['ЗОЛОТО', 'МИСТИЦИУМ', 'ЭЛИКСИР'],
+        'СКОРОСТЬ': ['ВЕТЕР', 'ЭНЕРГИЯ'],
+        'СИЛА': ['ОГОНЬ', 'ЗЕМЛЯ', 'МЕТАЛЛ'],
+        'МУДРОСТЬ': ['КНИГА', 'ЗНАНИЕ', 'ВРЕМЯ'],
+        'ХАОС': ['ОГОНЬ', 'ХАОС', 'ТЬМА'],
+        'ПОРЯДОК': ['ВОДА', 'КРИСТАЛЛ', 'СВЕТ'],
+        'ТЬМА': ['ПЕПЕЛ', 'НОЧЬ', 'СМЕРТЬ'],
+        'СВЕТ': ['КРИСТАЛЛ', 'ДЕНЬ', 'ЖИЗНЬ'],
+        'ЛЮБОВЬ': ['ЦВЕТОК', 'СЕРДЦЕ', 'ДУША'],
+        'СЧАСТЬЕ': ['ЦВЕТОК', 'СВЕТ', 'РАДУГА'],
+        'УДАЧА': ['ЗОЛОТО', 'КЛЕВЕР', 'МАГИЯ'],
+        
+        // Магические предметы (12)
+        'ВОЛШЕБНАЯ ПАЛОЧКА': ['ДЕРЕВО', 'КРИСТАЛЛ', 'МАГИЯ'],
+        'МАГИЧЕСКИЙ КРИСТАЛЛ': ['КРИСТАЛЛ', 'КРИСТАЛЛ', 'ЭНЕРГИЯ'],
+        'ЛЕТУЧИЙ ПОРОШОК': ['ПЕПЕЛ', 'ПЫЛЬ', 'ВОЗДУХ'],
+        'АМУЛЕТ': ['ЗОЛОТО', 'МАГИЯ', 'КАМЕНЬ'],
+        'КОЛЬЦО': ['МЕТАЛЛ', 'МАГИЯ', 'ДУША'],
+        'ПОСОХ': ['ДЕРЕВО', 'МАГИЯ', 'КРИСТАЛЛ'],
+        'СВИТОК': ['БУМАГА', 'МАГИЯ', 'ЧЕРНИЛА'],
+        'ЗЕЛЬЕВАРНЯ': ['КОТЁЛ', 'МАГИЯ', 'ОГОНЬ'],
+        'АЛХИМИЧЕСКИЙ НАБОР': ['ИНСТРУМЕНТЫ', 'РЕАГЕНТЫ', 'ЗНАНИЯ'],
+        'КНИГА ЗАКЛИНАНИЙ': ['БУМАГА', 'МАГИЯ', 'ЗНАНИЯ'],
+        'МАГИЧЕСКАЯ СФЕРА': ['СТЕКЛО', 'КРИСТАЛЛ', 'МАГИЯ'],
+        'ПОРТАЛ': ['ПРОСТРАНСТВО', 'ЭНЕРГИЯ', 'КРИСТАЛЛ'],
+        
+        // Ресурсы (10)
+        'ДЕРЕВО': ['ЗЕМЛЯ', 'ВОДА', 'ВРЕМЯ'],
+        'КАМЕНЬ': ['ЗЕМЛЯ', 'ЗЕМЛЯ'],
+        'ПЕСОК': ['КАМЕНЬ', 'ВЕТЕР', 'ВРЕМЯ'],
+        'СТЕКЛО': ['ПЕСОК', 'ОГОНЬ'],
+        'БУМАГА': ['ДЕРЕВО', 'ВОДА'],
+        'ТКАНЬ': ['ТРАВА', 'НИТКИ'],
+        'КРАСКА': ['ЦВЕТОК', 'ВОДА'],
+        'ЧЕРНИЛА': ['САЖА', 'ВОДА', 'МАГИЯ'],
+        'УГОЛЬ': ['ДЕРЕВО', 'ОГОНЬ', 'ВРЕМЯ'],
+        'МАСЛО': ['ТРАВА', 'ОГОНЬ'],
+        
+        // Сложные комбинации (7)
+        'ГОЛЕМ': ['КАМЕНЬ', 'ЖИЗНЬ', 'ЗЕМЛЯ'],
+        'ФЕНИКС': ['ПТИЦА', 'ОГОНЬ', 'БЕССМЕРТИЕ'],
+        'ДРАКОН': ['ЯЩЕРИЦА', 'ОГОНЬ', 'КРЫЛЬЯ'],
+        'ЕДИНОРОГ': ['ЛОШАДЬ', 'РОГ', 'МАГИЯ'],
+        'ФИЛОСОФСКИЙ КАМЕНЬ': ['ЗОЛОТО', 'МИСТИЦИУМ', 'БЕССМЕРТИЕ'],
+        'ДРЕВО ЖИЗНИ': ['ДЕРЕВО', 'ЖИЗНЬ', 'БЕССМЕРТИЕ'],
+        'ЧАША ГРААЛЯ': ['ЗОЛОТО', 'БЕССМЕРТИЕ', 'ДУША'],
+        
+        // Эссенции (4)
+        'ЭССЕНЦИЯ ЖИЗНИ': ['ЖИЗНЬ', 'МАГИЯ', 'ЦВЕТОК'],
+        'ЭССЕНЦИЯ СМЕРТИ': ['СМЕРТЬ', 'МАГИЯ', 'ПЕПЕЛ'],
+        'ЭССЕНЦИЯ ВРЕМЕНИ': ['ВРЕМЯ', 'МАГИЯ', 'ПЕСОК'],
+        'ЭССЕНЦИЯ МАГИИ': ['МАГИЯ', 'МАГИЯ', 'КРИСТАЛЛ']
+    };
+
+    const SHOP_ITEMS = [
+        { name: 'Набор ингредиентов', desc: '5 случайных', price: 100, type: 'random' },
+        { name: 'ЛЯГ (5 шт)', desc: 'Базовый ингредиент', price: 50, type: 'ingredient', ing: 'ЛЯГ' },
+        { name: 'ХРЯК (5 шт)', desc: 'Базовый ингредиент', price: 50, type: 'ingredient', ing: 'ХРЯК' },
+        { name: 'БРЫК (5 шт)', desc: 'Базовый ингредиент', price: 50, type: 'ingredient', ing: 'БРЫК' },
+        { name: 'КРИСТАЛЛ (3 шт)', desc: 'Магический кристалл', price: 150, type: 'ingredient', ing: 'КРИСТАЛЛ' },
+        { name: 'МИСТИЦИУМ (2 шт)', desc: 'Редкий ингредиент', price: 300, type: 'ingredient', ing: 'МИСТИЦИУМ' },
+        { name: 'ЗОЛОТО (2 шт)', desc: 'Драгоценный металл', price: 400, type: 'ingredient', ing: 'ЗОЛОТО' },
+        { name: 'КНИГА РЕЦЕПТОВ', desc: 'Открывает новый рецепт', price: 500, type: 'book' }
+    ];
+
+    const ACHIEVEMENTS = [
+        { id: 'first', name: '👣 Первый шаг', desc: 'Найти первый рецепт', reward: 100, condition: (state) => state.discoveredRecipes.length >= 1 },
+        { id: 'collect10', name: '📚 Коллекционер', desc: 'Найти 10 рецептов', reward: 300, condition: (state) => state.discoveredRecipes.length >= 10 },
+        { id: 'collect25', name: '🎓 Знаток', desc: 'Найти 25 рецептов', reward: 600, condition: (state) => state.discoveredRecipes.length >= 25 },
+        { id: 'collect40', name: '🧙‍♂️ Магистр', desc: 'Найти 40 рецептов', reward: 1000, condition: (state) => state.discoveredRecipes.length >= 40 },
+        { id: 'collect60', name: '👑 Легенда', desc: 'Найти 60 рецептов', reward: 2000, condition: (state) => state.discoveredRecipes.length >= 60 },
+        { id: 'rich', name: '💰 Богач', desc: 'Накопить 2000 золота', reward: 500, condition: (state) => state.gold >= 2000 },
+        { id: 'experiment', name: '🔬 Экспериментатор', desc: 'Сделать 20 экспериментов', reward: 300, condition: (state) => state.experiments >= 20 },
+        { id: 'master', name: '⚗️ Мастер', desc: 'Достичь 5 уровня', reward: 400, condition: (state) => state.level >= 5 },
+        { id: 'legend', name: '👑 Легенда', desc: 'Достичь 10 уровня', reward: 1000, condition: (state) => state.level >= 10 }
+    ];
+
+    // ==================== СОСТОЯНИЕ ИГРЫ ====================
+    let gameState = {
+        gold: 1000,
+        level: 1,
+        exp: 0,
+        discoveredRecipes: ['ГВАПР'],
+        inventory: {
+            'ЛЯГ': 10, 'ХРЯК': 10, 'БРЫК': 10, 'КВАК': 5, 'ХРЮК': 5, 'БРЯК': 5,
+            'ОГОНЬ': 5, 'ВОДА': 5, 'ЗЕМЛЯ': 5, 'ВОЗДУХ': 5, 'КРИСТАЛЛ': 3,
+            'ТРАВА': 5, 'ГРИБ': 3, 'ЦВЕТОК': 3, 'ПЕПЕЛ': 3, 'РТУТЬ': 2,
+            'СЕРА': 3, 'СОЛЬ': 3, 'МЕДЬ': 3, 'ЖЕЛЕЗО': 3, 'ЗОЛОТО': 1,
+            'МИСТИЦИУМ': 1, 'ДЕРЕВО': 3, 'КАМЕНЬ': 3, 'ПЕСОК': 2
+        },
+        achievements: [],
+        experiments: 0
+    };
+
+    // Классический режим
+    let classicState = {
+        difficulty: 'easy',
+        attempts: 0,
+        maxAttempts: 7,
+        targetRecipes: ['ГВАПР'],
+        foundRecipes: [],
+        currentMix: [],
+        gameActive: true
+    };
+
+    // Песочница
+    let sandboxState = {
+        craftSlots: [null, null, null],
+        selectedSlot: 0
+    };
+
+    // ==================== ФУНКЦИИ ====================
+    function showNotification(message) {
+        const notif = document.createElement('div');
+        notif.className = 'notification';
+        notif.textContent = message;
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 3000);
+    }
+
+    function updateGlobalUI() {
+        document.getElementById('globalGold').textContent = gameState.gold;
+        document.getElementById('globalLevel').textContent = gameState.level;
+        document.getElementById('globalRecipes').textContent = `${gameState.discoveredRecipes.length}/${Object.keys(RECIPES).length}`;
+        document.getElementById('shopGold').textContent = gameState.gold;
+        document.getElementById('recipesFoundCount').textContent = gameState.discoveredRecipes.length;
+    }
+
+    function addExp(amount) {
+        gameState.exp += amount;
+        const newLevel = Math.floor(gameState.exp / 200) + 1;
+        if (newLevel > gameState.level) {
+            showNotification(`⭐ УРОВЕНЬ ПОВЫШЕН! Теперь ${newLevel} уровень! ⭐`);
+        }
+        gameState.level = newLevel;
+        updateGlobalUI();
+        checkAchievements();
+    }
+
+    function discoverRecipe(name) {
+        if (!gameState.discoveredRecipes.includes(name)) {
+            gameState.discoveredRecipes.push(name);
+            gameState.gold += 50;
+            addExp(100);
+            showNotification(`✨ Новый рецепт: ${name}! +50 золота ✨`);
+            updateGlobalUI();
+            updateRecipesBook();
+            checkAchievements();
+            return true;
+        }
+        return false;
+    }
+
+    function checkAchievements() {
+        let newAchievements = false;
+        
+        ACHIEVEMENTS.forEach(ach => {
+            if (!gameState.achievements.includes(ach.id) && ach.condition(gameState)) {
+                gameState.achievements.push(ach.id);
+                gameState.gold += ach.reward;
+                showNotification(`🏆 ДОСТИЖЕНИЕ: ${ach.name}! +${ach.reward} золота 🏆`);
+                newAchievements = true;
+            }
+        });
+        
+        if (newAchievements) {
+            updateGlobalUI();
+            updateAchievementsUI();
+        }
+    }
+
+    // ==================== КЛАССИКА ====================
+    function initClassic() {
+        const settings = {
+            'easy': { max: 7, recipes: ['ГВАПР'] },
+            'medium': { max: 8, recipes: ['ГВАПР', 'БУЛЬК'] },
+            'hard': { max: 10, recipes: ['ГВАПР', 'БУЛЬК', 'ШИПУЧКА'] },
+            'legendary': { max: 12, recipes: ['ГВАПР', 'БУЛЬК', 'ШИПУЧКА', 'ЭЛИКСИР'] }
+        };
+        
+        classicState.maxAttempts = settings[classicState.difficulty].max;
+        classicState.targetRecipes = settings[classicState.difficulty].recipes;
+        classicState.attempts = 0;
+        classicState.foundRecipes = [];
+        classicState.currentMix = [];
+        classicState.gameActive = true;
+        
+        updateClassicUI();
+        document.getElementById('classicWinMessage').style.display = 'none';
+        document.getElementById('classicHistory').innerHTML = '<div>🜁 Новая игра началась!</div>';
+    }
+
+    function updateClassicUI() {
+        document.getElementById('classicAttempts').textContent = classicState.attempts;
+        document.getElementById('classicMax').textContent = classicState.maxAttempts;
+        document.getElementById('classicProgress').textContent = `📜 Найдено: ${classicState.foundRecipes.length}/${classicState.targetRecipes.length}`;
+        document.getElementById('classicMixInput').value = classicState.currentMix.join(' + ');
+        
+        if (classicState.foundRecipes.length < classicState.targetRecipes.length) {
+            const nextRecipe = classicState.targetRecipes.find(r => !classicState.foundRecipes.includes(r));
+            document.getElementById('classicHint').textContent = `🔮 Ищем: ${nextRecipe}`;
+        } else {
+            document.getElementById('classicHint').textContent = '✨ ПОБЕДА!';
+        }
+    }
+
+    function checkClassicCombination() {
+        if (!classicState.gameActive) return;
+        if (classicState.currentMix.length !== 3) {
+            alert('Нужно 3 ингредиента!');
+            return;
+        }
+
+        classicState.attempts++;
+        const attemptStr = classicState.currentMix.join(' ');
+        
+        let foundRecipe = null;
+        for (const [name, formula] of Object.entries(RECIPES)) {
+            if (formula.length === 3 && formula.join(' ') === attemptStr) {
+                foundRecipe = name;
+                break;
+            }
+        }
+
+        const history = document.getElementById('classicHistory');
+        const entry = document.createElement('div');
+        
+        if (foundRecipe && classicState.targetRecipes.includes(foundRecipe) && !classicState.foundRecipes.includes(foundRecipe)) {
+            classicState.foundRecipes.push(foundRecipe);
+            discoverRecipe(foundRecipe);
+            entry.innerHTML = `🏆 НАЙДЕНО: ${foundRecipe}!`;
+            entry.style.color = 'gold';
+            
+            if (classicState.foundRecipes.length === classicState.targetRecipes.length) {
+                classicState.gameActive = false;
+                document.getElementById('classicWinMessage').style.display = 'block';
+                document.getElementById('classicWinMessage').innerHTML = '🏆 ГВАПР И ВСЕ РЕЦЕПТЫ СОБРАНЫ! 🏆<br>Ты великий алхимик!';
+                showNotification('🎉 ПОБЕДА В КЛАССИКЕ! 🎉');
+            }
+        } else if (foundRecipe) {
+            entry.innerHTML = `ℹ️ Найдено: ${foundRecipe} (уже есть)`;
+            entry.style.color = '#aae0aa';
+        } else {
+            entry.innerHTML = `❌ Неизвестное зелье: ${attemptStr}`;
+            entry.style.color = '#f99';
+        }
+        
+        history.appendChild(entry);
+        history.scrollTop = history.scrollHeight;
+
+        if (classicState.attempts >= classicState.maxAttempts && classicState.gameActive) {
+            classicState.gameActive = false;
+            document.getElementById('classicWinMessage').style.display = 'block';
+            document.getElementById('classicWinMessage').style.background = '#4a2a2a';
+            document.getElementById('classicWinMessage').innerHTML = '💥 КОТЁЛ ВЗОРВАЛСЯ!<br>Попытки кончились';
+        }
+
+        classicState.currentMix = [];
+        updateClassicUI();
+    }
+
+    // ==================== ПЕСОЧНИЦА ====================
+    function initSandbox() {
+        const grid = document.getElementById('sandboxIngredients');
+        grid.innerHTML = '';
+        ALL_INGREDIENTS.forEach(ing => {
+            const card = document.createElement('div');
+            card.className = 'ingredient-card';
+            card.textContent = ing;
+            card.onclick = () => {
+                sandboxState.craftSlots[sandboxState.selectedSlot] = ing;
+                updateSandboxSlots();
+                updateSandboxResult();
+            };
+            grid.appendChild(card);
+        });
+        updateSandboxSlots();
+    }
+
+    function updateSandboxSlots() {
+        for (let i = 0; i < 3; i++) {
+            const slot = document.getElementById(`sandboxSlot${i}`);
+            if (sandboxState.craftSlots[i]) {
+                slot.textContent = sandboxState.craftSlots[i];
+                slot.className = 'craft-slot filled';
+            } else {
+                slot.textContent = `⬜ СЛОТ ${i+1}`;
+                slot.className = 'craft-slot';
+            }
+            slot.onclick = () => {
+                sandboxState.selectedSlot = i;
+                updateSandboxSlots();
+            };
+        }
+    }
+
+    function updateSandboxResult() {
+        if (sandboxState.craftSlots.every(s => s !== null)) {
+            const combination = sandboxState.craftSlots;
+            let found = '???';
+            for (const [name, formula] of Object.entries(RECIPES)) {
+                if (formula.length === 3 && formula.every((ing, idx) => ing === combination[idx])) {
+                    found = name;
+                    break;
+                }
+            }
+            document.getElementById('sandboxResult').innerHTML = `➡️ ${found} ⬅️`;
+        } else {
+            document.getElementById('sandboxResult').innerHTML = '➡️ ??? ⬅️';
+        }
+    }
+
+    function craftSandbox() {
+        if (sandboxState.craftSlots.includes(null)) {
+            alert('Заполни все слоты!');
+            return;
+        }
+
+        gameState.experiments++;
+        const combination = [...sandboxState.craftSlots];
+        let craftedItem = null;
+        
+        for (const [name, formula] of Object.entries(RECIPES)) {
+            if (formula.length === 3 && formula.every((ing, idx) => ing === combination[idx])) {
+                craftedItem = name;
+                break;
+            }
+        }
+
+        const history = document.getElementById('sandboxHistory');
+        const entry = document.createElement('div');
+        
+        if (craftedItem) {
+            if (discoverRecipe(craftedItem)) {
+                entry.innerHTML = `🎉 НОВЫЙ РЕЦЕПТ: ${craftedItem}! (${combination.join(' + ')})`;
+                entry.style.color = 'gold';
+            } else {
+                entry.innerHTML = `✅ ${craftedItem} (${combination.join(' + ')})`;
+                entry.style.color = '#aae0aa';
+                gameState.gold += 5;
+            }
+        } else {
+            entry.innerHTML = `🌀 Эксперимент: ${combination.join(' + ')} = ???`;
+            entry.style.color = '#b5d6b0';
+            if (Math.random() > 0.7) {
+                gameState.gold += 2;
+            }
+        }
+        
+        history.appendChild(entry);
+        history.scrollTop = history.scrollHeight;
+        
+        sandboxState.craftSlots = [null, null, null];
+        updateSandboxSlots();
+        updateSandboxResult();
+        updateGlobalUI();
+        checkAchievements();
+    }
+
+    // ==================== МАГАЗИН ====================
+    function initShop() {
+        const grid = document.getElementById('shopGrid');
+        grid.innerHTML = '';
+        SHOP_ITEMS.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'shop-item';
+            card.innerHTML = `
+                <div style="font-size: 1.5rem; font-weight: bold;">${item.name}</div>
+                <div style="margin: 10px 0;">${item.desc}</div>
+                <div class="shop-item-price">💰 ${item.price}</div>
+                <button class="buy-btn" onclick="buyItem('${item.type}', '${item.ing || ''}', ${item.price})">КУПИТЬ</button>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    window.buyItem = function(type, ing, price) {
+        if (gameState.gold < price) {
+            alert('Недостаточно золота!');
+            return;
+        }
+        
+        gameState.gold -= price;
+        
+        if (type === 'random') {
+            for (let i = 0; i < 5; i++) {
+                const randomIng = ALL_INGREDIENTS[Math.floor(Math.random() * ALL_INGREDIENTS.length)];
+                gameState.inventory[randomIng] = (gameState.inventory[randomIng] || 0) + 1;
+            }
+            showNotification('🎲 Получено 5 случайных ингредиентов!');
+        }
+        else if (type === 'ingredient') {
+            gameState.inventory[ing] = (gameState.inventory[ing] || 0) + 5;
+            showNotification(`✅ Получено 5 × ${ing}`);
+        }
+        else if (type === 'book') {
+            const allRecipes = Object.keys(RECIPES);
+            const newRecipes = allRecipes.filter(r => !gameState.discoveredRecipes.includes(r));
+            if (newRecipes.length > 0) {
+                const newRecipe = newRecipes[Math.floor(Math.random() * newRecipes.length)];
+                discoverRecipe(newRecipe);
+            } else {
+                alert('Ты уже знаешь все рецепты!');
+                gameState.gold += price;
+            }
+        }
+        
+        updateGlobalUI();
+        checkAchievements();
+    };
+
+    // ==================== КНИГА РЕЦЕПТОВ ====================
+    function updateRecipesBook() {
+        const grid = document.getElementById('recipesGrid');
+        grid.innerHTML = '';
+        Object.keys(RECIPES).sort().forEach(recipe => {
+            const found = gameState.discoveredRecipes.includes(recipe);
+            const card = document.createElement('div');
+            card.className = `recipe-card ${found ? 'found' : ''}`;
+            card.innerHTML = `
+                <div class="recipe-name">${recipe}</div>
+                <div>${found ? RECIPES[recipe].join(' + ') : '???️'}</div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // ==================== АЧИВКИ ====================
+    function updateAchievementsUI() {
+        const grid = document.getElementById('achievementsGrid');
+        grid.innerHTML = '';
+        ACHIEVEMENTS.forEach(ach => {
+            const unlocked = gameState.achievements.includes(ach.id);
+            const card = document.createElement('div');
+            card.className = `achievement-card ${unlocked ? 'unlocked' : ''}`;
+            card.innerHTML = `
+                <div style="font-size: 1.3rem; font-weight: bold;">${ach.name}</div>
+                <div style="margin: 10px 0;">${ach.desc}</div>
+                <div class="achievement-reward">+${ach.reward}💰</div>
+                <div style="margin-top: 20px;">${unlocked ? '✅ ПОЛУЧЕНО' : '❌ НЕ ПОЛУЧЕНО'}</div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+    window.onload = function() {
+        // Вкладки
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const tab = btn.dataset.tab;
+                document.getElementById('classicTab').classList.toggle('active', tab === 'classic');
+                document.getElementById('sandboxTab').classList.toggle('active', tab === 'sandbox');
+                document.getElementById('shopTab').classList.toggle('active', tab === 'shop');
+                document.getElementById('recipesTab').classList.toggle('active', tab === 'recipes');
+                document.getElementById('achievementsTab').classList.toggle('active', tab === 'achievements');
+            });
+        });
+
+        // Классика - сложность
+        document.querySelectorAll('.diff-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                classicState.difficulty = btn.dataset.diff;
+                initClassic();
+            });
+        });
+
+        // Классика - ингредиенты
+        const classicIngs = ['ЛЯГ', 'ХРЯК', 'БРЫК', 'КВАК', 'ХРЮК', 'БРЯК'];
+        const classicGrid = document.getElementById('classicIngredients');
+        classicIngs.forEach(ing => {
+            const btn = document.createElement('div');
+            btn.className = 'ingredient-card';
+            btn.textContent = ing;
+            btn.onclick = () => {
+                if (classicState.gameActive && classicState.currentMix.length < 3) {
+                    classicState.currentMix.push(ing);
+                    updateClassicUI();
+                }
+            };
+            classicGrid.appendChild(btn);
+        });
+
+        document.getElementById('classicMixBtn').onclick = checkClassicCombination;
+
+        // Песочница
+        initSandbox();
+        document.getElementById('sandboxCraftBtn').onclick = craftSandbox;
+
+        // Магазин
+        initShop();
+
+        // Книга рецептов
+        updateRecipesBook();
+
+        // Ачивки
+        updateAchievementsUI();
+
+        // Старт
+        initClassic();
+        updateGlobalUI();
+        
+        // Проверяем первую ачивку
+        checkAchievements();
+    };
+</script>
+</body>
+</html>
